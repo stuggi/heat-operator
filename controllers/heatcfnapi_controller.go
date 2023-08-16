@@ -292,8 +292,9 @@ func (r *HeatCfnAPIReconciler) reconcileInit(
 	apiEndpoints := make(map[string]string)
 
 	for endpointType, data := range heatCfnAPIEndpoints {
-		endpointName := heatcfnapi.ServiceName + "-" + string(endpointType)
-		svcOverride := service.GetOverrideSpecForEndpoint(instance.Spec.Override.Service, endpointType)
+		endpointTypeStr := string(endpointType)
+		endpointName := heatcfnapi.ServiceName + "-" + endpointTypeStr
+		svcOverride := instance.Spec.Override.Service[endpointTypeStr]
 
 		exportLabels := util.MergeStringMaps(
 			serviceLabels,
@@ -316,7 +317,7 @@ func (r *HeatCfnAPIReconciler) reconcileInit(
 				},
 			}),
 			5,
-			svcOverride,
+			&svcOverride,
 		)
 		if err != nil {
 			instance.Status.Conditions.Set(condition.FalseCondition(
@@ -351,7 +352,7 @@ func (r *HeatCfnAPIReconciler) reconcileInit(
 
 		// TODO: TLS, pass in https as protocol, create TLS cert
 		apiEndpoints[string(endpointType)], err = svc.GetAPIEndpoint(
-			svcOverride, data.Protocol, data.Path)
+			&svcOverride, data.Protocol, data.Path)
 		if err != nil {
 			return ctrl.Result{}, err
 		}
