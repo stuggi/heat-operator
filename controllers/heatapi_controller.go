@@ -313,7 +313,7 @@ func (r *HeatAPIReconciler) reconcileInit(
 				},
 			}),
 			5,
-			&svcOverride,
+			svcOverride.GetOverrideSpec(),
 		)
 		if err != nil {
 			instance.Status.Conditions.Set(condition.FalseCondition(
@@ -334,9 +334,6 @@ func (r *HeatAPIReconciler) reconcileInit(
 		if endpointType == service.EndpointPublic && svc.GetServiceType() == corev1.ServiceTypeClusterIP {
 			svc.AddAnnotation(map[string]string{
 				service.AnnotationIngressCreateKey: "true",
-			})
-			svc.AddAnnotation(map[string]string{
-				service.AnnotationIngressNameKey: heatapi.ServiceName,
 			})
 		} else {
 			svc.AddAnnotation(map[string]string{
@@ -366,7 +363,7 @@ func (r *HeatAPIReconciler) reconcileInit(
 
 		// TODO: TLS, pass in https as protocol, create TLS cert
 		apiEndpoints[string(endpointType)], err = svc.GetAPIEndpoint(
-			&svcOverride, data.Protocol, data.Path)
+			svcOverride.EndpointURL, data.Protocol, data.Path)
 		if err != nil {
 			return ctrl.Result{}, err
 		}
