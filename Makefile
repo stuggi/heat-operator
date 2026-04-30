@@ -55,7 +55,7 @@ DEFAULT_IMG ?= quay.io/openstack-k8s-operators/heat-operator:latest
 IMG ?= $(DEFAULT_IMG)
 
 # ENVTEST_K8S_VERSION refers to the version of kubebuilder assets to be downloaded by envtest binary.
-ENVTEST_K8S_VERSION = 1.31
+ENVTEST_K8S_VERSION = 1.33
 
 SETUP_ENVTEST_VERSION ?= release-0.22
 

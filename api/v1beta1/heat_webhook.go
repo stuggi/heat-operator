@@ -33,7 +33,6 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/util/validation/field"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
-	"sigs.k8s.io/controller-runtime/pkg/webhook"
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 )
 
@@ -57,7 +56,6 @@ func SetupHeatDefaults(defaults HeatDefaults) {
 	heatlog.Info("Heat defaults initialized", "defaults", defaults)
 }
 
-var _ webhook.Defaulter = &Heat{}
 
 // Default implements webhook.Defaulter so a webhook will be registered for the type
 func (r *Heat) Default() {
@@ -151,7 +149,6 @@ func (spec *HeatSpecCore) Default() {
 	spec.HeatSpecBase.Default()
 }
 
-var _ webhook.Validator = &Heat{}
 
 // ValidateCreate implements webhook.Validator so a webhook will be registered for the type
 func (r *Heat) ValidateCreate() (admission.Warnings, error) {
