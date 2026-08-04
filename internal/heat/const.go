@@ -62,8 +62,6 @@ const (
 	HeatUID int64 = 42418
 	// HeatGID is the GID for the heat group (heat:heat)
 	HeatGID int64 = 42418
-	// KollaConfigDbSync -
-	KollaConfigDbSync = "/var/lib/config-data/merged/db-sync-config.json"
 	// APIComponent -
 	APIComponent = "api"
 	// CfnAPIComponent -

@@ -20,6 +20,8 @@ import (
 
 	heatv1beta1 "github.com/openstack-k8s-operators/heat-operator/api/v1beta1"
 
+	"github.com/openstack-k8s-operators/lib-common/modules/common/pod"
+	"github.com/openstack-k8s-operators/lib-common/modules/serviceuser"
 	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -139,12 +141,13 @@ func DBPurgeJob(
 									},
 									Args:            args,
 									VolumeMounts:    cronJobVolumeMounts,
-									SecurityContext: GetHeatDBSecurityContext(),
+									SecurityContext: pod.RestrictiveSecurityContext(serviceuser.HeatUID),
 								},
 							},
 							Volumes:            cronJobVolume,
 							RestartPolicy:      corev1.RestartPolicyNever,
 							ServiceAccountName: instance.RbacResourceName(),
+							SecurityContext:    pod.RestrictivePodSecurityContext(serviceuser.HeatUID),
 							NodeSelector:       nodeSelector,
 						},
 					},

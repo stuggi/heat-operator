@@ -66,24 +66,13 @@ func GetVolumes(parentName string, name string,
 }
 
 // GetVolumeMounts ...
-func GetVolumeMounts(name string,
+func GetVolumeMounts(
 	extraVol []heatv1.HeatExtraVolMounts,
 	svc []storage.PropagationType) []corev1.VolumeMount {
 	vm := []corev1.VolumeMount{
 		{
-			Name:      "config-data",
-			MountPath: "/var/lib/kolla/config_files/config.json",
-			SubPath:   name + "-config.json",
-			ReadOnly:  true,
-		},
-		{
 			Name:      "config-data-custom",
 			MountPath: "/etc/heat/heat.conf.d",
-			ReadOnly:  true,
-		},
-		{
-			Name:      "config-data",
-			MountPath: "/var/lib/config-data/default",
 			ReadOnly:  true,
 		},
 		{

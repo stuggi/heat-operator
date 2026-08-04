@@ -19,6 +19,8 @@ import (
 	heatv1beta1 "github.com/openstack-k8s-operators/heat-operator/api/v1beta1"
 
 	"github.com/openstack-k8s-operators/lib-common/modules/common/env"
+	"github.com/openstack-k8s-operators/lib-common/modules/common/pod"
+	"github.com/openstack-k8s-operators/lib-common/modules/serviceuser"
 	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -38,8 +40,6 @@ func DBSyncJob(
 	args := []string{"-c", DBSyncCommand}
 
 	envVars := map[string]env.Setter{}
-	envVars["KOLLA_CONFIG_STRATEGY"] = env.SetValue("COPY_ALWAYS")
-	envVars["KOLLA_BOOTSTRAP"] = env.SetValue("true")
 
 	volumes := GetVolumes(ServiceName, instance.Name,
 		instance.Spec.ExtraMounts, DbsyncPropagation)
@@ -65,6 +65,7 @@ func DBSyncJob(
 				Spec: corev1.PodSpec{
 					RestartPolicy:      corev1.RestartPolicyOnFailure,
 					ServiceAccountName: instance.RbacResourceName(),
+					SecurityContext:    pod.RestrictivePodSecurityContext(serviceuser.HeatUID),
 					Containers: []corev1.Container{
 						{
 							Name: ServiceName + "-db-sync",
@@ -73,7 +74,7 @@ func DBSyncJob(
 							},
 							Args:            args,
 							Image:           instance.Spec.HeatEngine.ContainerImage,
-							SecurityContext: GetHeatDBSecurityContext(),
+							SecurityContext: pod.RestrictiveSecurityContext(serviceuser.HeatUID),
 							Env:             env.MergeEnvs([]corev1.EnvVar{}, envVars),
 							VolumeMounts:    volumeMounts,
 						},
